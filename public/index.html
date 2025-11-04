@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesseract.js Демо</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .demo-link {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }
+        .demo-link:hover {
+            background-color: #45a049;
+        }
+        .description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .features {
+            text-align: left;
+            margin: 30px 0;
+        }
+        .features h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .features ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .features li:before {
+            content: "✓ ";
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tesseract.js OCR Демо</h1>
+        
+        <div class="description">
+            <p>Демонстрация работы библиотеки Tesseract.js для распознавания текста с изображений прямо в браузере.</p>
+        </div>
+
+        <a href="ocr-demo.html" class="demo-link">Запустить OCR Демо</a>
+
+        <div class="features">
+            <h3>Возможности демо:</h3>
+            <ul>
+                <li>Распознавание текста с изображений в форматах PNG, JPG, JPEG, BMP, GIF</li>
+                <li>Поддержка русского и английского языков</li>
+                <li>Предпросмотр загруженного изображения</li>
+                <li>Отображение прогресса распознавания</li>
+                <li>Копирование распознанного текста в буфер обмена</li>
+                <li>Адаптивный интерфейс</li>
+            </ul>
+        </div>
+
+        <div class="description">
+            <p><strong>Технологии:</strong> Tesseract.js, HTML5, CSS3, JavaScript</p>
+            <p><em>Для работы требуется запущенный сервер разработки (npm start)</em></p>
+        </div>
+    </div>
+</body>
+</html>

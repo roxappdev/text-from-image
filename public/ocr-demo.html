@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesseract.js OCR Демо</title>
+    <script src="/dist/tesseract.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .upload-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .file-input {
+            margin: 15px 0;
+        }
+        .preview-section {
+            display: none;
+            margin-bottom: 20px;
+        }
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .result-section {
+            display: none;
+            margin-top: 20px;
+        }
+        #resultText {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .error {
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tesseract.js OCR Демо</h1>
+        
+        <div class="upload-section">
+            <h3>Загрузите изображение для распознавания текста</h3>
+            <input type="file" id="fileInput" class="file-input" accept="image/*">
+            <p>Поддерживаемые форматы: PNG, JPG, JPEG, BMP, GIF</p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <p id="status">Инициализация OCR...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="preview-section" id="previewSection">
+            <h3>Предпросмотр изображения:</h3>
+            <img id="imagePreview" alt="Предпросмотр загруженного изображения">
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <h3>Распознанный текст:</h3>
+            <textarea id="resultText" readonly placeholder="Здесь появится распознанный текст..."></textarea>
+            <div style="margin-top: 10px;">
+                <button onclick="copyToClipboard()">Копировать текст</button>
+                <button onclick="clearAll()" style="background-color: #f44336; margin-left: 10px;">Очистить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let worker = null;
+        let isProcessing = false;
+
+        // Инициализация Tesseract worker
+        async function initializeWorker() {
+            try {
+                worker = await Tesseract.createWorker("rus+eng", 1, {
+                    workerPath: "/dist/worker.min.js",
+                    logger: function(m) {
+                        updateProgress(m);
+                    }
+                });
+                console.log("Tesseract worker инициализирован");
+            } catch (error) {
+                console.error("Ошибка инициализации Tesseract:", error);
+                showError("Не удалось инициализировать OCR движок: " + error.message);
+            }
+        }
+
+        // Обновление прогресса
+        function updateProgress(message) {
+            const statusElement = document.getElementById('status');
+            const progressElement = document.getElementById('progress');
+            
+            if (message.status === 'recognizing text') {
+                const progress = Math.round(message.progress * 100);
+                progressElement.style.width = progress + '%';
+                statusElement.textContent = `Распознавание текста: ${progress}%`;
+            } else if (message.status === 'loading tesseract core') {
+                statusElement.textContent = 'Загрузка ядра Tesseract...';
+            } else if (message.status === 'initializing tesseract') {
+                statusElement.textContent = 'Инициализация Tesseract...';
+            } else if (message.status === 'loading language traineddata') {
+                statusElement.textContent = 'Загрузка языковых данных...';
+            }
+        }
+
+        // Показать ошибку
+        function showError(message) {
+            const errorElement = document.getElementById('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // Скрыть ошибку
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        // Обработка загрузки файла
+        document.getElementById('fileInput').addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (isProcessing) {
+                alert("Пожалуйста, дождитесь завершения текущей обработки");
+                return;
+            }
+
+            // Проверка типа файла
+            if (!file.type.startsWith('image/')) {
+                showError("Пожалуйста, выберите файл изображения");
+                return;
+            }
+
+            hideError();
+            isProcessing = true;
+
+            // Показать предпросмотр
+            const previewSection = document.getElementById('previewSection');
+            const imagePreview = document.getElementById('imagePreview');
+            const url = URL.createObjectURL(file);
+            imagePreview.src = url;
+            previewSection.style.display = 'block';
+
+            // Скрыть предыдущие результаты
+            document.getElementById('resultSection').style.display = 'none';
+
+            // Показать загрузку
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('progress').style.width = '0%';
+
+            try {
+                // Инициализация worker если еще не создан
+                if (!worker) {
+                    await initializeWorker();
+                }
+
+                // Распознавание текста
+                const result = await worker.recognize(file);
+                
+                // Показать результат
+                document.getElementById('resultText').value = result.data.text;
+                document.getElementById('resultSection').style.display = 'block';
+                
+                console.log("Распознавание завершено:", result.data);
+                
+            } catch (error) {
+                console.error("Ошибка распознавания:", error);
+                showError("Ошибка при распознавании текста: " + error.message);
+            } finally {
+                // Скрыть загрузку
+                document.getElementById('loading').style.display = 'none';
+                isProcessing = false;
+                URL.revokeObjectURL(url);
+            }
+        });
+
+        // Копирование текста в буфер обмена
+        function copyToClipboard() {
+            const textarea = document.getElementById('resultText');
+            textarea.select();
+            document.execCommand('copy');
+            alert("Текст скопирован в буфер обмена!");
+        }
+
+        // Очистка всего
+        function clearAll() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('resultText').value = '';
+            document.getElementById('loading').style.display = 'none';
+            hideError();
+            isProcessing = false;
+        }
+
+        // Инициализация при загрузке страницы
+        window.addEventListener('load', function() {
+            console.log("Страница загружена, инициализация Tesseract...");
+        });
+
+        // Очистка worker при закрытии страницы
+        window.addEventListener('beforeunload', async function() {
+            if (worker) {
+                await worker.terminate();
+                console.log("Tesseract worker завершен");
+            }
+        });
+    </script>
+</body>
+</html>
