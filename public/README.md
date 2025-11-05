@@ -1,55 +1,55 @@
-# Tesseract.js OCR Демо
+# Tesseract.js OCR Demo
 
-Демонстрационная страница для распознавания текста с изображений с использованием библиотеки Tesseract.js.
+Demo page for text recognition from images using Tesseract.js library.
 
-## Файлы
+## Files
 
-- `index.html` - Главная страница с описанием и ссылкой на демо
-- `ocr-demo.html` - Основная демо-страница для распознавания текста
+- `index.html` - Main page with description and link to demo
+- `ocr-demo.html` - Main demo page for text recognition
 
-## Запуск
+## Setup
 
-1. Убедитесь, что зависимости установлены:
+1. Make sure dependencies are installed:
    ```bash
    npm install
    ```
 
-2. Запустите сервер разработки:
+2. Start the development server:
    ```bash
    npm start
    ```
 
-3. Откройте в браузере:
+3. Open in browser:
    ```
    http://localhost:3000/public/
    ```
 
-## Функциональность
+## Features
 
-- Загрузка изображений через input type="file"
-- Поддержка форматов: PNG, JPG, JPEG, BMP, GIF
-- Распознавание текста на русском и английском языках
-- Предпросмотр загруженного изображения
-- Отображение прогресса распознавания
-- Копирование распознанного текста в буфер обмена
-- Обработка ошибок
+- Image upload via input type="file"
+- Supported formats: PNG, JPG, JPEG, BMP, GIF
+- Text recognition in Russian and English languages
+- Preview of uploaded image
+- Recognition progress display
+- Copy recognized text to clipboard
+- Error handling
 
-## Технологии
+## Technologies
 
-- Tesseract.js - OCR библиотека
-- HTML5 File API - работа с файлами
-- CSS3 - стилизация
-- JavaScript ES6+ - логика приложения
+- Tesseract.js - OCR library
+- HTML5 File API - file handling
+- CSS3 - styling
+- JavaScript ES6+ - application logic
 
-## Использование
+## Usage
 
-1. Откройте демо-страницу
-2. Нажмите "Выберите файл" и загрузите изображение с текстом
-3. Дождитесь завершения распознавания
-4. Скопируйте или используйте распознанный текст
+1. Open the demo page
+2. Click "Choose File" and upload an image with text
+3. Wait for recognition to complete
+4. Copy or use the recognized text
 
-## Примечания
+## Notes
 
-- Для работы требуется запущенный сервер (нельзя открывать файлы напрямую через file://)
-- Первое использование может занять время для загрузки языковых данных
-- Качество распознавания зависит от качества исходного изображения
+- Requires running server (cannot open files directly via file://)
+- First use may take time to load language data
+- Recognition quality depends on source image quality

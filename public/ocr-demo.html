@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tesseract.js OCR Демо</title>
+    <title>Tesseract.js OCR Demo</title>
     <script src="/dist/tesseract.min.js"></script>
     <style>
         body {
@@ -23,6 +23,10 @@
             color: #333;
             text-align: center;
             margin-bottom: 30px;
+        }
+        h3 {
+            color: #444;
+            margin-bottom: 15px;
         }
         .upload-section {
             text-align: center;
@@ -103,34 +107,34 @@
 </head>
 <body>
     <div class="container">
-        <h1>Tesseract.js OCR Демо</h1>
+        <h1>Tesseract.js OCR Demo</h1>
         
         <div class="upload-section">
-            <h3>Загрузите изображение для распознавания текста</h3>
+            <h3>Upload an image to recognize text</h3>
             <input type="file" id="fileInput" class="file-input" accept="image/*">
-            <p>Поддерживаемые форматы: PNG, JPG, JPEG, BMP, GIF</p>
+            <p>Supported formats: PNG, JPG, JPEG, BMP, GIF</p>
         </div>
 
         <div class="loading" id="loading">
             <div class="progress-bar">
                 <div class="progress" id="progress"></div>
             </div>
-            <p id="status">Инициализация OCR...</p>
+            <p id="status">Initializing OCR...</p>
         </div>
 
         <div class="error" id="error"></div>
 
         <div class="preview-section" id="previewSection">
-            <h3>Предпросмотр изображения:</h3>
-            <img id="imagePreview" alt="Предпросмотр загруженного изображения">
+            <h3>Image Preview:</h3>
+            <img id="imagePreview" alt="Preview of uploaded image">
         </div>
 
         <div class="result-section" id="resultSection">
-            <h3>Распознанный текст:</h3>
-            <textarea id="resultText" readonly placeholder="Здесь появится распознанный текст..."></textarea>
+            <h3>Recognized Text:</h3>
+            <textarea id="resultText" readonly placeholder="Recognized text will appear here..."></textarea>
             <div style="margin-top: 10px;">
-                <button onclick="copyToClipboard()">Копировать текст</button>
-                <button onclick="clearAll()" style="background-color: #f44336; margin-left: 10px;">Очистить</button>
+                <button onclick="copyToClipboard()">Copy Text</button>
+                <button onclick="clearAll()" style="background-color: #f44336; margin-left: 10px;">Clear All</button>
             </div>
         </div>
     </div>
@@ -148,10 +152,10 @@
                         updateProgress(m);
                     }
                 });
-                console.log("Tesseract worker инициализирован");
+                console.log("Tesseract worker initialized");
             } catch (error) {
                 console.error("Ошибка инициализации Tesseract:", error);
-                showError("Не удалось инициализировать OCR движок: " + error.message);
+                showError("Failed to initialize OCR engine: " + error.message);
             }
         }
 
@@ -163,13 +167,13 @@
             if (message.status === 'recognizing text') {
                 const progress = Math.round(message.progress * 100);
                 progressElement.style.width = progress + '%';
-                statusElement.textContent = `Распознавание текста: ${progress}%`;
+                statusElement.textContent = `Recognizing text: ${progress}%`;
             } else if (message.status === 'loading tesseract core') {
-                statusElement.textContent = 'Загрузка ядра Tesseract...';
+                statusElement.textContent = 'Loading Tesseract core...';
             } else if (message.status === 'initializing tesseract') {
-                statusElement.textContent = 'Инициализация Tesseract...';
+                statusElement.textContent = 'Initializing Tesseract...';
             } else if (message.status === 'loading language traineddata') {
-                statusElement.textContent = 'Загрузка языковых данных...';
+                statusElement.textContent = 'Loading language data...';
             }
         }
 
@@ -185,74 +189,74 @@
             document.getElementById('error').style.display = 'none';
         }
 
-        // Обработка загрузки файла
+        // File upload handling
         document.getElementById('fileInput').addEventListener('change', async function(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             if (isProcessing) {
-                alert("Пожалуйста, дождитесь завершения текущей обработки");
+                alert("Please wait for the current processing to complete");
                 return;
             }
 
-            // Проверка типа файла
+            // File type validation
             if (!file.type.startsWith('image/')) {
-                showError("Пожалуйста, выберите файл изображения");
+                showError("Please select an image file");
                 return;
             }
 
             hideError();
             isProcessing = true;
 
-            // Показать предпросмотр
+            // Show preview
             const previewSection = document.getElementById('previewSection');
             const imagePreview = document.getElementById('imagePreview');
             const url = URL.createObjectURL(file);
             imagePreview.src = url;
             previewSection.style.display = 'block';
 
-            // Скрыть предыдущие результаты
+            // Hide previous results
             document.getElementById('resultSection').style.display = 'none';
 
-            // Показать загрузку
+            // Show loading
             document.getElementById('loading').style.display = 'block';
             document.getElementById('progress').style.width = '0%';
 
             try {
-                // Инициализация worker если еще не создан
+                // Initialize worker if not created yet
                 if (!worker) {
                     await initializeWorker();
                 }
 
-                // Распознавание текста
+                // Recognize text
                 const result = await worker.recognize(file);
                 
-                // Показать результат
+                // Show result
                 document.getElementById('resultText').value = result.data.text;
                 document.getElementById('resultSection').style.display = 'block';
                 
-                console.log("Распознавание завершено:", result.data);
+                console.log("Recognition completed:", result.data);
                 
             } catch (error) {
-                console.error("Ошибка распознавания:", error);
-                showError("Ошибка при распознавании текста: " + error.message);
+                console.error("Recognition error:", error);
+                showError("Error recognizing text: " + error.message);
             } finally {
-                // Скрыть загрузку
+                // Hide loading
                 document.getElementById('loading').style.display = 'none';
                 isProcessing = false;
                 URL.revokeObjectURL(url);
             }
         });
 
-        // Копирование текста в буфер обмена
+        // Copy text to clipboard
         function copyToClipboard() {
             const textarea = document.getElementById('resultText');
             textarea.select();
             document.execCommand('copy');
-            alert("Текст скопирован в буфер обмена!");
+            alert("Text copied to clipboard!");
         }
 
-        // Очистка всего
+        // Clear all
         function clearAll() {
             document.getElementById('fileInput').value = '';
             document.getElementById('previewSection').style.display = 'none';
@@ -263,16 +267,16 @@
             isProcessing = false;
         }
 
-        // Инициализация при загрузке страницы
+        // Initialize on page load
         window.addEventListener('load', function() {
-            console.log("Страница загружена, инициализация Tesseract...");
+            console.log("Page loaded, initializing Tesseract...");
         });
 
-        // Очистка worker при закрытии страницы
+        // Cleanup worker on page close
         window.addEventListener('beforeunload', async function() {
             if (worker) {
                 await worker.terminate();
-                console.log("Tesseract worker завершен");
+                console.log("Tesseract worker terminated");
             }
         });
     </script>
