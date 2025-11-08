@@ -149,6 +149,7 @@
                 worker = await Tesseract.createWorker("rus+eng", 1, {
                     workerPath: "/dist/worker.min.js",
                     corePath: "/public/core",
+                  //langPath: "https://tessdata.projectnaptha.com/4.0.0_fast",
                     logger: function(m) {
                         updateProgress(m);
                     }
