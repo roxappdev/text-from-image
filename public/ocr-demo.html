@@ -148,6 +148,7 @@
             try {
                 worker = await Tesseract.createWorker("rus+eng", 1, {
                     workerPath: "/dist/worker.min.js",
+                    corePath: "/public/core",
                     logger: function(m) {
                         updateProgress(m);
                     }
