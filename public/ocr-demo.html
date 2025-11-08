@@ -107,8 +107,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Tesseract.js OCR Demo</h1>
-        
+        <h1>Tesseract.js OCR Demo 2</h1>
+
         <div class="upload-section">
             <h3>Upload an image to recognize text</h3>
             <input type="file" id="fileInput" class="file-input" accept="image/*">
@@ -163,7 +163,7 @@
         function updateProgress(message) {
             const statusElement = document.getElementById('status');
             const progressElement = document.getElementById('progress');
-            
+
             if (message.status === 'recognizing text') {
                 const progress = Math.round(message.progress * 100);
                 progressElement.style.width = progress + '%';
@@ -230,13 +230,13 @@
 
                 // Recognize text
                 const result = await worker.recognize(file);
-                
+
                 // Show result
                 document.getElementById('resultText').value = result.data.text;
                 document.getElementById('resultSection').style.display = 'block';
-                
+
                 console.log("Recognition completed:", result.data);
-                
+
             } catch (error) {
                 console.error("Recognition error:", error);
                 showError("Error recognizing text: " + error.message);
