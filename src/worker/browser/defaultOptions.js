@@ -8,5 +8,5 @@ const defaultOptions = require('../../constants/defaultOptions');
  */
 module.exports = {
   ...defaultOptions,
-  workerPath: `https://cdn.jsdelivr.net/npm/tesseract.js@v${version}/dist/worker.min.js`,
+  workerPath: `./worker.min.js`,
 };
