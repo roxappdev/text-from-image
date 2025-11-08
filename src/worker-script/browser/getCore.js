@@ -11,7 +11,7 @@ module.exports = async (lstmOnly, corePath, res) => {
 
     // If the user specifies a core path, we use that
     // Otherwise, default to CDN
-    const corePathImport = corePath || `./core`;
+    const corePathImport = corePath || `../public/core`;
 
     // If a user specifies a specific JavaScript file, load that file.
     // Otherwise, assume a directory has been provided, and load either
