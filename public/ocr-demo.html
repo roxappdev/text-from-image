@@ -146,7 +146,7 @@
         // Инициализация Tesseract worker
         async function initializeWorker() {
             try {
-                worker = await Tesseract.createWorker("rus+eng", 1, {
+                worker = await Tesseract.createWorker("eng", 1, {
                     workerPath: "/dist/worker.min.js",
                     corePath: "/public/core",
                   //langPath: "https://tessdata.projectnaptha.com/4.0.0_fast",
