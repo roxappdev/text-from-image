@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Extract text from image</title>
-    <script src="../dist/tesseract.min.js"></script>
+    <script src="dist/tesseract.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -147,8 +147,8 @@
   async function initializeWorker() {
     try {
       worker = await Tesseract.createWorker("eng", 1, {
-        workerPath: "../dist/worker.min.js",
-        corePath: "./core",
+        workerPath: "dist/worker.min.js",
+        corePath: "public/core",
         //langPath: "https://tessdata.projectnaptha.com/4.0.0_fast",
         logger: function(m) {
           updateProgress(m);
